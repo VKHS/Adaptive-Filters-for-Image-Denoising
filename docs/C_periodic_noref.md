@@ -85,10 +85,40 @@ frequencies to hand to A.
 3. Keep $\alpha$ small (about $2\cdot10^{-3}$): the weights see the whole image, row after row, and the
    interference is stationary.
 
+## Try it
+
+```python
+from adaptive_denoise import noise, scenario_c
+from adaptive_denoise.imageio import load_test_image
+from adaptive_denoise.metrics import psnr
+
+x, _ = load_test_image()
+nz = noise.make("periodic", x)
+out, info = scenario_c.subband_canceller(nz.y, record=True)     # no frequency, no reference
+print(f"{psnr(x, nz.y):.2f} dB -> {psnr(x, out):.2f} dB")        # 21.44 dB -> 28.04 dB
+f, H = scenario_c.predictor_response(info["weights"], 8)        # the band-pass the predictor learned
+```
+
+```matlab
+x = load_test_image();
+nz = make_noisy('periodic', x);
+[out, info] = subband_canceller(nz.y);                  % L = 128, delay 8, alpha 0.002, split sigma 4
+fprintf('%.2f dB -> %.2f dB\n', psnr_db(x, nz.y), psnr_db(x, out));
+```
+
+## Application example: stripes that drift
+
+<img src="../figures/examples/example_C_drifting_stripes.png" width="100%">
+
+Vibration stripes whose frequency drifts from 0.08 to 0.12 cycles/pixel down the image. The spectrum has no
+sharp peak, so A's detector finds nothing. C needs neither a frequency nor a reference: its weights, carried
+from row to row, follow the drift, and the per-row spectra show the line removed from top to bottom. 23.02 to
+32.47 dB. Details in [examples](examples.md#c-vibration-stripes-whose-frequency-drifts).
+
 ## Implementation atlas: controlled image example
 
 ![Scenario C data flow and synthetic image comparison](../figures/atlas/C_implementation.svg)
 
 **Worked interpretation.** Construct h = z − Gaussian(z) on the row-centred signal, and predict h from delayed taps. The LMS error is h − y, while the image output is d − y. The Gaussian split protects the low band but not all scene edges or textures. In the supplemental synthetic example the shorter FIR and larger normalised step are chosen for its smaller raster.
 
-The independent illustration uses the parameters printed in the figure; it is not a rerun of the original benchmark. See [worked examples](implementation_atlas.md#2-the-six-scenarios-in-images) and [evaluation protocol](evaluation_protocol.md).
+Settings and PSNR are printed in the panel. More worked examples: [implementation atlas](implementation_atlas.md#2-the-six-scenarios-in-images).

@@ -103,7 +103,18 @@ gives two scenarios:
 * **error output**: the narrowband part is removed, so periodic interference is cancelled (scenario C);
 * **filter output**: only the narrowband part is kept, so a line is enhanced in broadband noise (scenarios D, E).
 
-## 6. From a time signal to an image
+## 6. The six configurations on 1-D signals
+
+<img src="../figures/overview/fig_1d_intuition.png" width="100%">
+
+One LMS loop, six choices of reference and output. A: two weights on $\cos$/$\sin$ at the hum frequency learn
+its amplitude and phase. B: a constant reference makes a first-order high-pass that removes a drifting
+baseline. C: the delayed primary predicts the sinusoid, and the error keeps the broadband part. D: the same
+wiring, keeping the prediction, pulls a sine out of white noise with the peak gain
+$(L/2)\mathrm{SNR}/((L/2)\mathrm{SNR}+1)$. E: the predictor follows a chirp. F: a reference that sees the noise
+source lets the weights identify the path to the primary. The script is `python/make_examples.py oned`.
+
+## 7. From a time signal to an image
 
 | 1-D canceller | image |
 |---|---|
@@ -125,7 +136,7 @@ The pages for the six scenarios apply these points one by one:
 [A](A_adaptive_notch.md) · [B](B_bias_drift.md) · [C](C_periodic_noref.md) · [D](D_self_tuning.md) ·
 [E](E_line_enhancer.md) · [F](F_reference_canceller.md).
 
-## 7. Engineering interpretation and implementation atlas
+## 8. Engineering interpretation and implementation atlas
 
 ![Reference families and retained outputs](../figures/atlas/reference_taxonomy.svg)
 

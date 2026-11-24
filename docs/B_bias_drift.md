@@ -93,10 +93,49 @@ gains 6.4 dB more, because it measures the offsets instead of inferring them.
 * On images whose PSNR is already high, B's small random-walk errors cost more than they remove (-1.8 dB on
   pixel RTS noise in the benchmark): use it only where banding is visible.
 
+## Try it
+
+```python
+import numpy as np
+from adaptive_denoise import noise, scenario_b
+from adaptive_denoise.imageio import load_test_image
+from adaptive_denoise.metrics import psnr
+
+x, _ = load_test_image()
+nz = noise.make("banding", x)
+out, offsets = scenario_b.interline_canceller(nz.y)     # row banding on a natural image
+print(f"{psnr(x, nz.y):.2f} dB -> {psnr(x, out):.2f} dB")        # 26.01 dB -> 33.32 dB
+
+# flat background (probe microscopy): the textbook form along each scan line, gated update
+s = scenario_b.afm_scene()
+scan = s + 0.05 * np.random.default_rng(0).standard_normal((512, 1))       # one offset per line
+out, bias = scenario_b.bias_canceller(scan, mu2=0.05, update="gated", tau=0.08)
+print(f"{scenario_b.offset_aligned_psnr(s, scan):.2f} dB -> {scenario_b.offset_aligned_psnr(s, out):.2f} dB")   # 25.94 -> 40.26
+```
+
+```matlab
+x = load_test_image();
+nz = make_noisy('banding', x);
+[out, off] = interline_canceller(nz.y);                 % mu2 = 0.001, two passes, high-pass over 16 rows
+s = afm_scene(512, 512);
+scan = s + repmat(0.05 * randn(512, 1), 1, 512);
+[out2, bias] = bias_canceller(scan, 0.05, 'gated', 0.08);
+fprintf('%.2f dB\n', offset_aligned_psnr(s, out2));
+```
+
+## Application example: probe-microscopy scan
+
+<img src="../figures/examples/example_B_probe_microscopy.png" width="100%">
+
+Line offsets, thermal drift along each fast-scan line and a tilt. Row-median levelling removes the offsets
+only (25.09 dB). The LMS update leaves a shadow behind each particle (28.44 dB). The gated update holds the
+weight across particles and follows the substrate: 34.63 dB. Details in
+[examples](examples.md#b-line-offsets-and-drift-in-a-probe-microscopy-scan).
+
 ## Implementation atlas: controlled image example
 
 ![Scenario B data flow and synthetic image comparison](../figures/atlas/B_implementation.svg)
 
 **Worked interpretation.** In the interline variant, if the tracked row offset is 0.07 and its low-pass part is 0.02, remove 0.05. The previous corrected row serves as an anchor; actual scene differences accumulate, so the offset high-pass is important. This is not equivalent to simply removing the row mean of a photograph.
 
-The independent illustration uses the parameters printed in the figure; it is not a rerun of the original benchmark. See [worked examples](implementation_atlas.md#2-the-six-scenarios-in-images) and [evaluation protocol](evaluation_protocol.md).
+Settings and PSNR are printed in the panel. More worked examples: [implementation atlas](implementation_atlas.md#2-the-six-scenarios-in-images).

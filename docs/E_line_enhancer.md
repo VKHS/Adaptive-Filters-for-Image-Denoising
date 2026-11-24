@@ -99,12 +99,44 @@ but local filters all struggle there: correlated noise overlaps the image spectr
   blind spot then smooths the image and keeps the interference (-1.3 to -4.0 dB in the benchmark). Those
   cases belong to A, B, C and F.
 
+## Try it
+
+```python
+from adaptive_denoise import noise, scenario_e
+from adaptive_denoise.imageio import load_test_image
+from adaptive_denoise.metrics import psnr
+
+x, _ = load_test_image()
+nz = noise.make("correlated", x)
+out, info = scenario_e.line_enhancer(nz.y, record=True)          # blind spot from the measured correlation
+print(info["hole"], info["n_taps"])                              # 2 (a 5 x 5 blind spot), 56 taps
+
+# white noise on a periodic texture: no hole, a larger window
+out = scenario_e.line_enhancer(nz.y, r=5, hole=0)
+```
+
+```matlab
+x = load_test_image();
+nz = make_noisy('correlated', x);
+[out, hole] = line_enhancer(nz.y);                      % hole chosen from the measured correlation
+fprintf('blind spot %d x %d: %.2f dB\n', 2 * hole + 1, 2 * hole + 1, psnr_db(x, out));
+```
+
+## Application example: periodic texture
+
+<img src="../figures/examples/example_E_periodic_texture.png" width="100%">
+
+Brick texture under white noise ($\sigma$ = 0.12). An 11 x 11 window (120 taps) predicts each pixel from the
+pattern's repetitions: 29.79 dB, against 28.49 dB for D's 5 x 5 window, 26.81 dB for the local Wiener filter and
+25.62 dB for the median. The learned weights line up with the mortar joints. Details in
+[examples](examples.md#e-a-periodic-texture-under-heavy-noise).
+
 ## Implementation atlas: controlled image example
 
 ![Scenario E data flow and synthetic image comparison](../figures/atlas/E_implementation.svg)
 
 **Worked interpretation.** For an on-bin sinusoid with linear SNR 0.25, L = 32 yields ideal amplitude gain 0.8; L = 64 yields 0.889. In a 2-D 9 × 9 window with h = 2 the excluded region is 5 × 5 and the active tap count is 56. The code extends the hole through consecutive estimated positive correlations above the threshold, then stops at the first lag below it. The supplemental lattice example specifies h = 0 for its white-noise model.
 
-The independent illustration uses the parameters printed in the figure; it is not a rerun of the original benchmark. See [worked examples](implementation_atlas.md#2-the-six-scenarios-in-images) and [evaluation protocol](evaluation_protocol.md).
+Settings and PSNR are printed in the panel. More worked examples: [implementation atlas](implementation_atlas.md#2-the-six-scenarios-in-images).
 
 ![Comparison of active taps and excluded centres](../figures/atlas/blindspot_geometry.svg)

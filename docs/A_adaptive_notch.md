@@ -109,10 +109,44 @@ keeps the gap between detected and true frequencies at about 1.4 dB for the defa
   needs a larger $\mu_2C^2$ so the weights can track it, at the cost of more image removed. Scenario C needs no
   frequency at all.
 
+## Try it
+
+```python
+from adaptive_denoise import noise, scenario_a
+from adaptive_denoise.imageio import load_test_image
+from adaptive_denoise.metrics import psnr
+
+x, _ = load_test_image()
+nz = noise.make("periodic", x)
+out, freqs = scenario_a.adaptive_notch(nz.y)           # detect the spectral peaks, then cancel them
+print(freqs)                                            # [(u, v), ...] in cycles/pixel
+print(f"{psnr(x, nz.y):.2f} dB -> {psnr(x, out):.2f} dB")        # 21.44 dB -> 41.56 dB
+
+# frequencies known in advance (sensor timing, mains frequency): no detection step
+out = scenario_a.notch_lms(nz.y, [(0.0, 0.0925), (0.0, 0.185), (0.137, 0.061)])   # 42.98 dB
+```
+
+```matlab
+x = load_test_image();
+nz = make_noisy('periodic', x);
+[out, freqs] = adaptive_notch(nz.y);                    % detect, then cancel
+out2 = notch_lms(nz.y, [0 0.0925; 0 0.185; 0.137 0.061]);    % frequencies known
+fprintf('%.2f dB -> %.2f dB\n', psnr_db(x, nz.y), psnr_db(x, out));
+```
+
+## Application example: LED flicker
+
+<img src="../figures/examples/example_A_flicker.png" width="100%">
+
+PWM-dimmed LED light seen by a rolling-shutter camera: horizontal bands at a frequency the sensor timing gives
+(0.0185 cycles/row). The flicker multiplies the scene, so a fixed-amplitude notch stops at 27.72 dB. In the
+log domain it becomes additive with a fixed amplitude, and notches at $u$ and $2u$ remove it: 22.39 to
+35.38 dB. Details in [examples](examples.md#a-led-flicker-in-a-rolling-shutter-camera).
+
 ## Implementation atlas: controlled image example
 
 ![Scenario A data flow and synthetic image comparison](../figures/atlas/A_implementation.svg)
 
 **Worked interpretation.** A cosine with an unknown phase is a linear combination of the sine and cosine at the same spatial frequency. The two weights identify that pair, not the frequency itself. With unit references and n = 0.14 cos(θ + 0.7), the ideal pair is (0.1071, −0.0902). The supplementary example uses known frequencies, unlike the main auto-detection benchmark. Inspect removed texture when a scene has true periodic structure. The exact 1-D transfer function assumes a constant phase increment; raster row transitions can break that condition.
 
-The independent illustration uses the parameters printed in the figure; it is not a rerun of the original benchmark. See [worked examples](implementation_atlas.md#2-the-six-scenarios-in-images) and [evaluation protocol](evaluation_protocol.md).
+Settings and PSNR are printed in the panel. More worked examples: [implementation atlas](implementation_atlas.md#2-the-six-scenarios-in-images).

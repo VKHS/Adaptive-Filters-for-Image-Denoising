@@ -63,7 +63,7 @@ flowchart LR
 
 ![D: random-valued impulsive noise and error-gated prediction](../figures/atlas/D_implementation.svg)
 
-For a 5 × 5 window with a 1 × 1 hole there are 24 taps. Suppose the predicted centre is 0.48, the measured centre is 0.92, and the robust scale is 0.05. The threshold at k = 4 is 0.20; |0.92 − 0.48| = 0.44 exceeds it, so the prediction replaces the centre and the weight update is skipped. If d = 0.53, the error is 0.05: keep the measured value and adapt. The code centres the input, maintains a running error scale, and updates the neighbourhood source between passes. It does not use a ground-truth corruption mask.
+For a 5 × 5 window with a 1 × 1 hole there are 24 taps. Suppose the predicted centre is 0.48, the measured centre is 0.92, and the robust scale is 0.05. The threshold at k = 4 is max(4 × 0.05, 0.1) = 0.20; |0.92 − 0.48| = 0.44 exceeds it, so the prediction replaces the centre and the weight update is skipped. The floor 0.1 takes over where the scale falls below 0.025, on flat and nearly noise-free areas. If d = 0.53, the error is 0.05: keep the measured value and adapt. The code centres the input, maintains a running error scale, and updates the neighbourhood source between passes. It does not use a ground-truth corruption mask.
 
 ```mermaid
 flowchart LR

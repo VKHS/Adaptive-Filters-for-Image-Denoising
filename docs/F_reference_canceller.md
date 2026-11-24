@@ -96,12 +96,51 @@ case for a reference: without one, no other method in the benchmark gains more t
 3. With a reference channel that is filtered differently from the primary, use more taps ($L > 1$), so the
    filter can learn the transfer function between them.
 
+## Try it
+
+```python
+from adaptive_denoise import noise, scenario_f
+from adaptive_denoise.imageio import load_test_image
+from adaptive_denoise.metrics import psnr
+
+x, _ = load_test_image()
+nz = noise.make("banding", x)
+side = nz.side
+w = scenario_f.train_row_weight(side["dark"], side["dark_ob"])   # shutter closed: learn w
+out = scenario_f.row_reference_canceller(nz.y, side["ob"], w)    # scene: w frozen
+print(f"{psnr(x, nz.y):.2f} dB -> {psnr(x, out):.2f} dB")        # 26.01 dB -> 39.76 dB
+
+nz = noise.make("telegraph_readout", x)
+side = nz.side
+out, w = scenario_f.channel_reference_canceller(nz.y, side["ref_out"], train=(side["dark"], side["dark_ref"]))
+print(f"{psnr(x, out):.2f} dB, w = {w[0]:.3f}")                  # 36.05 dB, w = 1.204
+```
+
+```matlab
+x = load_test_image();
+b = make_noisy('banding', x);
+w = train_row_weight(b.side.dark, b.side.dark_ob);     % shutter closed: learn w
+out = row_reference_canceller(b.y, b.side.ob, w);       % scene: w frozen
+t = make_noisy('telegraph_readout', x);
+[out2, wt] = channel_reference_canceller(t.y, t.side.ref_out, 1, 1e-3, t.side.dark, t.side.dark_ref);
+fprintf('%.2f dB, %.2f dB\n', psnr_db(x, out), psnr_db(x, out2));
+```
+
+## Application example: a faint astronomical field
+
+<img src="../figures/examples/example_F_astronomy.png" width="100%">
+
+Row banding and readout telegraph noise as strong as the faint galaxies they hide. The optical-black columns
+remove the banding (30.20 dB), and the reference output channel removes the telegraph steps: 27.95 to
+36.28 dB. Without references, B follows part of both and leaves streaks (31.07 dB). Details in
+[examples](examples.md#f-row-banding-and-readout-telegraph-noise-on-a-faint-field).
+
 ## Implementation atlas: controlled image example
 
 ![Scenario F data flow and synthetic image comparison](../figures/atlas/F_implementation.svg)
 
 **Worked interpretation.** If the optical-black row mean is 0.075 and the calibrated scalar weight is 0.96, subtract 0.072 from every pixel in that row. Reference calibration should remain independent of the scene. The numerical images and dark frames in the stored repository are simulated sensor observations, not physical measurements. Misalignment or reference leakage can invalidate the ideal cancellation limit.
 
-The independent illustration uses the parameters printed in the figure; it is not a rerun of the original benchmark. See [worked examples](implementation_atlas.md#2-the-six-scenarios-in-images) and [evaluation protocol](evaluation_protocol.md).
+Settings and PSNR are printed in the panel. More worked examples: [implementation atlas](implementation_atlas.md#2-the-six-scenarios-in-images).
 
 ![Analytical reference quality curves](../figures/atlas/reference_quality.svg)

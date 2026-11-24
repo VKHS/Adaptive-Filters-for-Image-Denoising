@@ -10,6 +10,7 @@
 | Original scenario demonstrations | [Results gallery](../figures/results/) and per-scenario docs | Includes specialised AFM, lattice, inverse-filter, and theory examples; not all rows use the camera image |
 | Supplemental atlas | [Synthetic scores](../results/atlas_synthetic.csv), [generator](../tools/build_atlas.cjs) | Independently computed reduced-size illustrations with disclosed settings; not additional camera-benchmark measurements |
 | Extended examples | [Python script](../python/extended_examples.py) | Optional new runs using the original Python modules; outputs are generated locally, not part of the stored benchmark |
+| Application examples | [Examples page](examples.md), [scores](../results/examples_python.csv), [generator](../python/make_examples.py) | One realistic corruption per scenario on a matching CC0 or public-domain image, with the best alternative on the same input |
 
 ![Original benchmark PSNR gains](../figures/atlas/benchmark_gain.svg)
 
@@ -30,7 +31,7 @@ The complete CSV includes per-noise SSIM and timing fields. The original Markdow
 
 * **Structured periodic interference:** A reaches 41.56 dB from 21.44 dB; C reaches 28.04 dB without a supplied sinusoidal reference. The method can remove genuine periodic scene texture if it is mistaken for interference.
 * **Row banding:** F reaches 39.76 dB; B reaches 33.32 dB without optical-black information. This is an information-availability comparison rather than two methods operating with identical inputs.
-* **Sparse interference:** D gated reaches 30.48 dB for random-valued impulses and 30.67 dB for bursts. Adaptive median remains stronger for exact salt-and-pepper corruption in this stored run.
+* **Sparse interference:** D gated reaches 30.94 dB for random-valued impulses and 31.76 dB for bursts. Adaptive median remains stronger for exact salt-and-pepper corruption (33.16 against 32.23 dB). The gate threshold k = 4 suits densities up to about 10 %; [the density sweep](../results/gated_density_sweep.csv) shows k = 3 holding to 25 %.
 * **Broadband noise:** D/E are competitive in several rows; local Wiener is stronger for white Gaussian noise, and the median is slightly stronger for correlated Gaussian noise. E's strength is retaining coherent texture, not universal superiority.
 * **Blur:** the six denoisers do not invert a point-spread function. Adaptive inverse modelling is a separate calibration-based experiment.
 * **Mixed corruption:** the fixed cascade increases PSNR by 9.95 dB and SSIM from approximately 0.177 to 0.686. This is a cumulative progression; it does not isolate the marginal effect of each module under all possible orderings.
