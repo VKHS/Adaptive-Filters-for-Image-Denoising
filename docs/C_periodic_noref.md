@@ -84,3 +84,11 @@ frequencies to hand to A.
    grows with $L$.
 3. Keep $\alpha$ small (about $2\cdot10^{-3}$): the weights see the whole image, row after row, and the
    interference is stationary.
+
+## Implementation atlas: controlled image example
+
+![Scenario C data flow and synthetic image comparison](../figures/atlas/C_implementation.svg)
+
+**Worked interpretation.** Construct h = z − Gaussian(z) on the row-centred signal, and predict h from delayed taps. The LMS error is h − y, while the image output is d − y. The Gaussian split protects the low band but not all scene edges or textures. In the supplemental synthetic example the shorter FIR and larger normalised step are chosen for its smaller raster.
+
+The independent illustration uses the parameters printed in the figure; it is not a rerun of the original benchmark. See [worked examples](implementation_atlas.md#2-the-six-scenarios-in-images) and [evaluation protocol](evaluation_protocol.md).

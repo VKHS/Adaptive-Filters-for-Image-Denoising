@@ -98,3 +98,13 @@ but local filters all struggle there: correlated noise overlaps the image spectr
 * On structured interference (banding, stripes, readout telegraph), the measured correlation is long. A large
   blind spot then smooths the image and keeps the interference (-1.3 to -4.0 dB in the benchmark). Those
   cases belong to A, B, C and F.
+
+## Implementation atlas: controlled image example
+
+![Scenario E data flow and synthetic image comparison](../figures/atlas/E_implementation.svg)
+
+**Worked interpretation.** For an on-bin sinusoid with linear SNR 0.25, L = 32 yields ideal amplitude gain 0.8; L = 64 yields 0.889. In a 2-D 9 × 9 window with h = 2 the excluded region is 5 × 5 and the active tap count is 56. The code extends the hole through consecutive estimated positive correlations above the threshold, then stops at the first lag below it. The supplemental lattice example specifies h = 0 for its white-noise model.
+
+The independent illustration uses the parameters printed in the figure; it is not a rerun of the original benchmark. See [worked examples](implementation_atlas.md#2-the-six-scenarios-in-images) and [evaluation protocol](evaluation_protocol.md).
+
+![Comparison of active taps and excluded centres](../figures/atlas/blindspot_geometry.svg)

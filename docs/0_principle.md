@@ -124,3 +124,13 @@ noise is what is left out.
 The pages for the six scenarios apply these points one by one:
 [A](A_adaptive_notch.md) · [B](B_bias_drift.md) · [C](C_periodic_noref.md) · [D](D_self_tuning.md) ·
 [E](E_line_enhancer.md) · [F](F_reference_canceller.md).
+
+## 7. Engineering interpretation and implementation atlas
+
+![Reference families and retained outputs](../figures/atlas/reference_taxonomy.svg)
+
+The cancellation identity assumes the wanted signal is uncorrelated with both primary interference and the reference-derived estimate. In practice finite-sample adaptation, nonstationarity and reference leakage can violate these assumptions. The usual LMS stability expression describes mean convergence under the standard independence approximation, not unconditional mean-square or finite-precision stability. The sign-error update minimises an absolute-error criterion; its scalar constant-reference special case tracks a median. The global normalisation by estimated regressor power is not per-sample NLMS.
+
+![Spatial tap geometry](../figures/atlas/blindspot_geometry.svg)
+
+The 2-D blind spot removes the central regressor samples; reflected boundaries and weights trained over repeated passes can still couple the target to its prediction. See the [implementation atlas](implementation_atlas.md) for arithmetic examples and [evaluation protocol](evaluation_protocol.md) for scope and numerical checks.

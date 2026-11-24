@@ -92,3 +92,11 @@ gains 6.4 dB more, because it measures the offsets instead of inferring them.
   method; it needs scenario F.
 * On images whose PSNR is already high, B's small random-walk errors cost more than they remove (-1.8 dB on
   pixel RTS noise in the benchmark): use it only where banding is visible.
+
+## Implementation atlas: controlled image example
+
+![Scenario B data flow and synthetic image comparison](../figures/atlas/B_implementation.svg)
+
+**Worked interpretation.** In the interline variant, if the tracked row offset is 0.07 and its low-pass part is 0.02, remove 0.05. The previous corrected row serves as an anchor; actual scene differences accumulate, so the offset high-pass is important. This is not equivalent to simply removing the row mean of a photograph.
+
+The independent illustration uses the parameters printed in the figure; it is not a rerun of the original benchmark. See [worked examples](implementation_atlas.md#2-the-six-scenarios-in-images) and [evaluation protocol](evaluation_protocol.md).

@@ -108,3 +108,11 @@ keeps the gap between detected and true frequencies at about 1.4 dB for the defa
 * Interference that is not sinusoidal in the raster, such as a pattern whose frequency changes across the image,
   needs a larger $\mu_2C^2$ so the weights can track it, at the cost of more image removed. Scenario C needs no
   frequency at all.
+
+## Implementation atlas: controlled image example
+
+![Scenario A data flow and synthetic image comparison](../figures/atlas/A_implementation.svg)
+
+**Worked interpretation.** A cosine with an unknown phase is a linear combination of the sine and cosine at the same spatial frequency. The two weights identify that pair, not the frequency itself. With unit references and n = 0.14 cos(θ + 0.7), the ideal pair is (0.1071, −0.0902). The supplementary example uses known frequencies, unlike the main auto-detection benchmark. Inspect removed texture when a scene has true periodic structure. The exact 1-D transfer function assumes a constant phase increment; raster row transitions can break that condition.
+
+The independent illustration uses the parameters printed in the figure; it is not a rerun of the original benchmark. See [worked examples](implementation_atlas.md#2-the-six-scenarios-in-images) and [evaluation protocol](evaluation_protocol.md).

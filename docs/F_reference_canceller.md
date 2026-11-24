@@ -95,3 +95,13 @@ case for a reference: without one, no other method in the benchmark gains more t
    pixels.
 3. With a reference channel that is filtered differently from the primary, use more taps ($L > 1$), so the
    filter can learn the transfer function between them.
+
+## Implementation atlas: controlled image example
+
+![Scenario F data flow and synthetic image comparison](../figures/atlas/F_implementation.svg)
+
+**Worked interpretation.** If the optical-black row mean is 0.075 and the calibrated scalar weight is 0.96, subtract 0.072 from every pixel in that row. Reference calibration should remain independent of the scene. The numerical images and dark frames in the stored repository are simulated sensor observations, not physical measurements. Misalignment or reference leakage can invalidate the ideal cancellation limit.
+
+The independent illustration uses the parameters printed in the figure; it is not a rerun of the original benchmark. See [worked examples](implementation_atlas.md#2-the-six-scenarios-in-images) and [evaluation protocol](evaluation_protocol.md).
+
+![Analytical reference quality curves](../figures/atlas/reference_quality.svg)

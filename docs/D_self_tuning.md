@@ -96,3 +96,11 @@ passes, image mean removed.
   Those cases belong to A, B, C and F.
 * Pixel RTS noise in a single frame is too weak and too similar to texture to be flagged reliably. Over a frame
   sequence, each pixel's switching history would serve as the reference.
+
+## Implementation atlas: controlled image example
+
+![Scenario D data flow and synthetic image comparison](../figures/atlas/D_implementation.svg)
+
+**Worked interpretation.** With a predicted centre of 0.48, target 0.92, and robust scale 0.05, the threshold at k = 4 is 0.20. The absolute error 0.44 triggers replacement and skips adaptation. With target 0.53 the error 0.05 permits the ordinary update. The mask is predicted from errors, not supplied by the simulator. The blind-spot tap exclusion alone is not a strict independence guarantee at reflected boundaries or over repeated adaptation passes.
+
+The independent illustration uses the parameters printed in the figure; it is not a rerun of the original benchmark. See [worked examples](implementation_atlas.md#2-the-six-scenarios-in-images) and [evaluation protocol](evaluation_protocol.md).
