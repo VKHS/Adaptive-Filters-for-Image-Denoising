@@ -3,3 +3,4 @@ __pycache__/
 .DS_Store
 results/cache/
 results/matlab_figures/
+results/extended_examples/

@@ -1,0 +1,26 @@
+example,method,psnr,ssim
+A flicker,noisy,22.3919,0.8836
+A flicker,"A, log domain",35.3822,0.9742
+A flicker,"A, linear",27.7221,0.8867
+B probe microscopy,noisy,22.3907,0.2809
+B probe microscopy,row median,25.0869,0.4420
+B probe microscopy,"B, LMS",28.4402,0.7225
+B probe microscopy,"B, gated",34.6295,0.8417
+C drifting stripes,noisy,23.0219,0.4366
+C drifting stripes,C,32.4724,0.9191
+D impulses on texture,noisy,19.2343,0.5931
+D impulses on texture,"D, error-gated",30.9856,0.9438
+D impulses on texture,median 3x3,27.3160,0.8810
+D impulses on texture,adaptive median,26.7534,0.8849
+E periodic texture,noisy,18.4200,0.2564
+E periodic texture,"E, 11x11",29.7885,0.7912
+E periodic texture,"D, 5x5",28.4922,0.7274
+E periodic texture,Wiener 5x5,26.8082,0.6954
+E periodic texture,median 3x3,25.6218,0.5504
+E lattice,noisy,14.4097,0.5005
+E lattice,"E, 9x9",25.6624,0.9470
+F astronomy,noisy,27.9471,0.6133
+F astronomy,"F, optical-black only",30.2030,0.7022
+F astronomy,"F, both references",36.2849,0.8973
+F astronomy,"B, sign-error",31.0693,0.7971
+F astronomy,median 3x3,28.6549,0.6342
