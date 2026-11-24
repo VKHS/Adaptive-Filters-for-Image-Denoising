@@ -322,7 +322,7 @@ def fig_A():
 def fig_B():
     nz = noise.make("banding", X)
     tb, _ = scenario_b.bias_canceller(nz.y, mu2=0.02, update="lms")
-    il0, off0 = scenario_b.interline_canceller(nz.y, mu2=0.001)
+    il0, off0 = scenario_b.interline_canceller(nz.y, mu2=0.001, hp_rows=None)
     il, off = scenario_b.interline_canceller(nz.y, mu2=0.001, hp_rows=16)
     fig = plt.figure(figsize=(13.5, 3.7))
     gs = fig.add_gridspec(1, 5, width_ratios=[1, 1, 1, 1, 1.5], wspace=0.12)

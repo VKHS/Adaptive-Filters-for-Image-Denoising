@@ -73,7 +73,7 @@ def plane_wave_refs(shape, freqs, C=1.0):
     return refs
 
 
-def notch_lms(img, freqs, mu2=0.002, C=1.0, passes=2, record=False):
+def notch_lms(img, freqs, mu2=0.001, C=1.0, passes=2, record=False):
     """Two-weight-per-frequency LMS notch in raster order. Returns the error output (cleaned image).
 
     The image mean is removed before and restored after, so the DC level does not jitter the weights.
@@ -105,7 +105,7 @@ def notch_lms(img, freqs, mu2=0.002, C=1.0, passes=2, record=False):
     return out
 
 
-def adaptive_notch(img, freqs=None, mu2=0.002, C=1.0, passes=2, **detect_kw):
+def adaptive_notch(img, freqs=None, mu2=0.001, C=1.0, passes=2, **detect_kw):
     """Scenario A end to end: detect the interference frequencies (unless given) and cancel them.
 
     Returns (cleaned image, list of frequencies used). With no detected peak the image is returned unchanged.

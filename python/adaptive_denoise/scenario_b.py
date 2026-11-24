@@ -58,7 +58,7 @@ def bias_canceller(img, mu2=0.02, update="lms", tau=0.08):
     return out, track
 
 
-def interline_canceller(img, mu2=0.002, passes=2, hp_rows=None):
+def interline_canceller(img, mu2=0.001, passes=2, hp_rows=16):
     """Line-to-line bias canceller with a sign-error update.
 
     For row i the primary is the row, the reference is the previous *corrected* row, and the single bias
@@ -66,7 +66,7 @@ def interline_canceller(img, mu2=0.002, passes=2, hp_rows=None):
     row is row - b_i. Because the previous row is already corrected, b_i is the full offset of row i (plus
     the scene's own line-to-line change, whose errors accumulate from row to row). With hp_rows set, the
     slow part of the sequence b_i (Gaussian, hp_rows rows) is put back, so only fast banding is removed and
-    slow scene shading survives.
+    slow scene shading survives (hp_rows=None switches this off).
     Returns (corrected image, per-row offset estimates).
     """
     H, W = img.shape

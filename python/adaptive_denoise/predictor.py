@@ -83,12 +83,14 @@ def blindspot_lms(img, r=2, hole=0, alpha=0.01, mu2=None, passes=2, update="lms"
     return out
 
 
-def blindspot_gated(img, r=2, alpha=0.01, k=3.0, passes=2):
+def blindspot_gated(img, r=2, alpha=0.01, k=4.0, passes=3, t_min=0.1):
     """Error-gated predictor for sparse (impulsive) noise.
 
     The prediction error e = d - y is small on clean pixels and large on impulses. Each pixel is
-    classified with |e| > k * s, where s is a running robust scale of e. Flagged pixels are replaced
-    by the prediction y and do not update the weights; clean pixels are kept as they are.
+    classified with |e| > max(k * s, t_min), where s is a running robust scale of e and t_min a floor on the
+    threshold (deviations below it are within the range of ordinary texture, and without the floor the scale
+    collapses on flat, noise-free regions so that edges get flagged). Flagged pixels are replaced by the
+    prediction y and do not update the weights; clean pixels are kept as they are.
     Pass 1 builds the taps from the noisy image; later passes build them from the previous output, so
     neighbours that were flagged no longer contaminate the prediction (bursts).
     Returns (output, flag mask).
@@ -116,7 +118,7 @@ def blindspot_gated(img, r=2, alpha=0.01, k=3.0, passes=2):
                 yj = w @ x
                 e = d[j] - yj
                 ae = abs(e)
-                bad = ae > k * s
+                bad = ae > max(k * s, t_min)
                 if bad:
                     out[i, j] = yj
                     flags[i, j] = True
