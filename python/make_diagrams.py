@@ -1,6 +1,7 @@
 """Block diagrams of the canceller principle and of the six scenarios.
 
-    python make_diagrams.py        # writes figures/diagrams/*.png
+    python make_diagrams.py                   # writes figures/diagrams/*.png
+    python make_diagrams.py decision_guide    # only the named diagrams
 """
 import sys
 from pathlib import Path
@@ -270,14 +271,79 @@ def scenario_f():
     D.save(OUT / "diagram_F_reference.png")
 
 
+def decision_guide():
+    """Which configuration fits a corruption: questions from the top, the first 'yes' decides.
+
+    The gains are read from results/benchmark_python.csv and results/examples_python.csv, so the diagram follows
+    the stored runs (run_benchmark.py and make_examples.py write them).
+    """
+    import csv
+
+    def table(name, key):
+        path = REPO / "results" / name
+        with open(path) as fh:
+            return {tuple(r[k] for k in key): r for r in csv.DictReader(fh)}
+
+    bench = table("benchmark_python.csv", ("noise", "method"))
+    ex = table("examples_python.csv", ("example", "method"))
+
+    def g(noise, method):
+        return f"{float(bench[(noise, method)]['gain']):+.1f} dB"
+
+    def gx(example, method):
+        return f"{float(ex[(example, method)]['psnr']) - float(ex[(example, 'noisy')]['psnr']):+.1f} dB"
+
+    W, H = 10.4, 8.2
+    D = Diagram(W, H, "Which scenario?  Go down the questions; the first \"yes\" picks the canceller")
+    rows = [
+        ("A sensor or channel sees the interference but not the scene?\n"
+         "(optical-black columns, a reference output channel)", "F  reference-sensor canceller",
+         f"banding {g('banding', 'F')}, readout telegraph {g('telegraph_readout', 'F')}", ORANGE_LIGHT),
+        ("Periodic interference at a known frequency,\nor a sharp, stable peak in the spectrum?", "A  adaptive notch",
+         f"periodic {g('periodic', 'A')}, LED flicker {gx('A flicker', 'A, log domain')}", ORANGE_LIGHT),
+        ("Periodic, but the frequency is unknown or drifts?", "C  canceller without a reference",
+         f"periodic {g('periodic', 'C')}, drifting stripes {gx('C drifting stripes', 'C')}", ORANGE_LIGHT),
+        ("An offset per line, or a slow drift along the scan?", "B  bias canceller",
+         f"row banding {g('banding', 'B')}, probe scan {gx('B probe microscopy', 'B, gated')}", ORANGE_LIGHT),
+        ("Sparse: a few pixels far off\n(impulses, bursts, dead or hot pixels)?", "D  error-gated self-tuning filter",
+         f"impulses {g('impulse', 'Dg')}, bursts {g('burst', 'Dg')}", BLUE_LIGHT),
+        ("Broadband and independent from pixel to pixel\n(Gaussian, Poisson)?", "D  blind-spot predictor",
+         f"Gaussian {g('gaussian', 'D')}, Poisson {g('poisson', 'D')}", BLUE_LIGHT),
+        ("A periodic texture to keep under heavy noise,\nor noise correlated over a few pixels?",
+         "E  line enhancer (blind spot > correlation)",
+         f"noisy lattice {gx('E lattice', 'E, 9x9')}, brick texture {gx('E periodic texture', 'E, 11x11')}", BLUE_LIGHT),
+    ]
+    qx, qw, ax_, aw, bh, y0, dy = 2.95, 5.3, 8.35, 3.6, 0.64, H - 0.95, 0.9
+    for k, (q, name, gain, fill) in enumerate(rows):
+        y = y0 - k * dy
+        qb = D.block(qx, y, qw, bh, q, fill=NEUTRAL, fs=8.2)
+        ab = D.block(ax_, y, aw, bh, None, fill=fill, fs=8.2)
+        D.text(ax_, y + 0.12, name, fs=8.6, color=INK, fontweight="bold")
+        D.text(ax_, y - 0.14, gain, fs=7.8, color=INK2)
+        D.wire([qb["r"], ab["l"]], color=INK, lw=1.2)
+        D.text((qb["r"][0] + ab["l"][0]) / 2, y + 0.13, "yes", fs=7.8, color=INK2)
+        yn = y - dy + (0.25 if k == len(rows) - 1 else bh / 2)      # top of the next box (the blur box is 0.5 high)
+        D.wire([qb["b"], (qx, yn)], color=MUTED, lw=1.1)
+        D.text(qx + 0.2, (y - bh / 2 + yn) / 2, "no", fs=7.8, color=MUTED)
+    yb = y0 - len(rows) * dy
+    D.block(qx, yb, qw, 0.5, "Blur?  A convolution, not added noise: none of the six.\n"
+            "Wire the same LMS as an inverse model (docs/beyond_blur.md).", fill="white", fs=8.0, edge=MUTED)
+    D.rect(6.75, yb + 0.1, 0.22, 0.14, fc=ORANGE_LIGHT, ec=INK2, lw=0.6, z=3)
+    D.note(7.05, yb + 0.25, "the filter predicts the noise; the output is $e = d - y$", fs=7.8)
+    D.rect(6.75, yb - 0.24, 0.22, 0.14, fc=BLUE_LIGHT, ec=INK2, lw=0.6, z=3)
+    D.note(7.05, yb - 0.09, "the filter predicts the image; the output is $y$", fs=7.8)
+    stages = sorted((m, float(r["psnr"])) for (n, m), r in bench.items() if n == "mixed" and m.startswith("stage"))
+    D.note(0.3, yb - 0.42, "Several corruptions at once: remove them in this order, top to bottom. The cascade "
+           f"F (twice), A, D gated, E raises\nthe all-noise image from {stages[0][1]:.2f} dB to {stages[-1][1]:.2f} dB. "
+           "Gains: PSNR over the noisy input (camera benchmark, then the application example).", fs=7.8, color=INK2)
+    D.save(OUT / "diagram_decision_guide.png")
+
 if __name__ == "__main__":
     setup()
     OUT.mkdir(parents=True, exist_ok=True)
-    principle()
-    scenario_a()
-    scenario_b()
-    scenario_c()
-    scenario_d()
-    scenario_e()
-    scenario_f()
+    every = [principle, scenario_a, scenario_b, scenario_c, scenario_d, scenario_e, scenario_f, decision_guide]
+    names = set(sys.argv[1:])
+    for fn in every:
+        if not names or fn.__name__ in names:
+            fn()
     print("diagrams written to", OUT)
