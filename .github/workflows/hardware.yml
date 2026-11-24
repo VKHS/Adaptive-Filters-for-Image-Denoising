@@ -1,0 +1,34 @@
+name: Hardware smoke and synthesis
+on:
+  push:
+    paths:
+      - 'hardware/**'
+      - '.github/workflows/hardware.yml'
+  pull_request:
+    paths:
+      - 'hardware/**'
+      - '.github/workflows/hardware.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  rtl:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        case: [a, b, c, d, e, f, frontends, window, gaussian]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Icarus Verilog
+        run: sudo apt-get update && sudo apt-get install -y iverilog
+      - name: Run bit-exact smoke
+        run: bash hardware/run_smoke.sh ${{ matrix.case }}
+  synthesis:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Yosys
+        run: sudo apt-get update && sudo apt-get install -y yosys
+      - name: Check all six default tops
+        run: bash hardware/run_synth.sh

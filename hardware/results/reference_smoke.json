@@ -1,0 +1,104 @@
+{
+  "status": "PASS",
+  "scope": "Executed integer reference model and scenario-specific assertions; not an HDL simulation result.",
+  "format": "signed 16-bit code / 4096",
+  "scenarios": [
+    {
+      "scenario": "A",
+      "transactions": 104,
+      "first": [
+        1536,
+        0,
+        1536,
+        0
+      ],
+      "last": [
+        512,
+        1024,
+        512,
+        0
+      ]
+    },
+    {
+      "scenario": "B",
+      "transactions": 56,
+      "first": [
+        2560,
+        64,
+        0,
+        0
+      ],
+      "last": [
+        1730,
+        -384,
+        0,
+        1
+      ]
+    },
+    {
+      "scenario": "C",
+      "transactions": 384,
+      "first": [
+        3548,
+        0,
+        2048,
+        0
+      ],
+      "last": [
+        1500,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "scenario": "D",
+      "transactions": 40,
+      "first": [
+        510,
+        510,
+        2,
+        0
+      ],
+      "last": [
+        512,
+        510,
+        2,
+        0
+      ]
+    },
+    {
+      "scenario": "E",
+      "transactions": 144,
+      "first": [
+        0,
+        0,
+        768,
+        0
+      ],
+      "last": [
+        -767,
+        -767,
+        -1,
+        0
+      ]
+    },
+    {
+      "scenario": "F",
+      "transactions": 210,
+      "first": [
+        1536,
+        0,
+        1536,
+        0
+      ],
+      "last": [
+        -32768,
+        1521,
+        -34289,
+        0
+      ]
+    }
+  ],
+  "total_transactions": 938
+}

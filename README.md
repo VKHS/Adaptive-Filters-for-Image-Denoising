@@ -18,6 +18,26 @@ so minimising the output power, which LMS does with $w \leftarrow w + \mu_2\, e\
 error without ever seeing $s$. The six scenarios differ in **where the reference comes from** and **which
 output is kept**. The theory is in [docs/0_principle.md](docs/0_principle.md).
 
+## Hardware architecture and Verilog implementations
+
+The [fixed-point hardware subsystem](hardware/README.md) maps the six adaptive-filter configurations to synthesizable Verilog processing cores and supporting image-stream components. Five share a resource-reused serial LMS engine; the scalar bias estimator has its own datapath.
+
+![Shared fixed-point LMS processing architecture](hardware/figures/shared_lms.svg)
+
+| A | B | C | D | E | F |
+|---|---|---|---|---|---|
+| [Notch RTL](hardware/docs/A_notch.md) | [Bias RTL](hardware/docs/B_bias.md) | [Delayed FIR RTL](hardware/docs/C_periodic.md) | [Self-tuning RTL](hardware/docs/D_self_tuning.md) | [Enhancer RTL](hardware/docs/E_line_enhancer.md) | [Reference RTL](hardware/docs/F_reference.md) |
+
+[RTL source files](hardware/rtl/) · [Six scenario testbenches](hardware/tb/) · [Fixed-point golden model](hardware/model/fixed_model.py) · [Smoke-test guide](hardware/docs/verification.md) · [Integration and memory planning](hardware/docs/integration.md)
+
+```bash
+python3 hardware/model/fixed_model.py
+bash hardware/run_smoke.sh
+bash hardware/run_synth.sh
+```
+
+The new hardware layer has 938 executed integer-reference transactions; HDL simulation is a separate check using Icarus Verilog and GitHub Actions. It does not change the original software algorithms or reported image benchmark. No FPGA implementation measurements are claimed.
+
 ## Visual implementation atlas
 
 ![Six adaptive configurations and their reference paths](figures/atlas/reference_taxonomy.svg)
