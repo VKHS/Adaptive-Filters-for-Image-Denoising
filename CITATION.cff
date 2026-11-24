@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "Adaptive Filters for Image Denoising"
+abstract: >-
+  The LMS adaptive noise canceller in its six classic configurations (adaptive notch,
+  bias canceller, canceller without a reference, self-tuning filter, adaptive line
+  enhancer and reference-sensor canceller), carried from one-dimensional signals to
+  images. Python and MATLAB implementations, a benchmark over eleven corruption models,
+  application examples, and fixed-point Verilog cores with testbenches.
+authors:
+  - family-names: "Khalili Sadaghiani"
+    given-names: "Abdolvahab"
+    orcid: "https://orcid.org/0000-0003-4870-2768"
+    affiliation: "Linköping University"
+repository-code: "https://github.com/VKHS/Adaptive-Filters-for-Image-Denoising"
+url: "https://github.com/VKHS/Adaptive-Filters-for-Image-Denoising"
+license: MIT
+date-released: "2026-11-24"
+keywords:
+  - adaptive filtering
+  - LMS
+  - adaptive noise cancellation
+  - image denoising
+  - adaptive notch filter
+  - adaptive line enhancer
+  - blind-spot prediction
+  - fixed-point Verilog

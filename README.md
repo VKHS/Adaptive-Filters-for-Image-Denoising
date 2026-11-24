@@ -1,6 +1,10 @@
 # Adaptive Filters for Image Denoising
 
 [![Hardware smoke and synthesis](https://github.com/VKHS/Adaptive-Filters-for-Image-Denoising/actions/workflows/hardware.yml/badge.svg)](https://github.com/VKHS/Adaptive-Filters-for-Image-Denoising/actions/workflows/hardware.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![ORCID](https://img.shields.io/badge/ORCID-0000--0003--4870--2768-A6CE39?logo=orcid&logoColor=white)](https://orcid.org/0000-0003-4870-2768)
+
+**Abdolvahab Khalili Sadaghiani** · ORCID [0000-0003-4870-2768](https://orcid.org/0000-0003-4870-2768)
 
 One LMS adaptive noise canceller, six ways of wiring it, carried from one-dimensional signals to images. Every
 configuration is implemented in **Python** and **MATLAB**, explained with its block diagram and theory, scored
@@ -25,7 +29,9 @@ alone, and then all of them together.
 [all at once](#all-corruptions-at-once) ·
 [hardware](#hardware-architecture-and-verilog-implementations) ·
 [layout](#repository-layout) ·
-[running it](#running-it)
+[running it](#running-it) ·
+[citation](#citation) ·
+[license](#license)
 
 ## The idea
 
@@ -369,6 +375,8 @@ figures/atlas/               implementation panels (vector)
 tools/build_atlas.cjs        deterministic, dependency-free atlas generator
 data/camera.png              benchmark test image (CC0)
 data/examples/               example images (CC0 / public domain)
+LICENSE                      MIT License
+CITATION.cff                 citation metadata, with the author's ORCID iD
 ```
 
 ## Running it
@@ -407,3 +415,23 @@ image and seed ([instructions](docs/implementation_atlas.md#4-reproduce-or-exten
 **Your own image.** Put it in `data/` as `lena.png`, and both languages use it in place of `camera.png`.
 Color images are converted to gray, and images of other sizes are resized to 512 x 512. Any other file can be
 passed to `load_test_image(path)`. Rerun the benchmark and the figures to regenerate everything.
+
+## Citation
+
+GitHub's **Cite this repository** button reads [CITATION.cff](CITATION.cff). In BibTeX:
+
+```bibtex
+@software{KhaliliSadaghiani_AdaptiveFilters_2026,
+  author  = {Khalili Sadaghiani, Abdolvahab},
+  title   = {Adaptive Filters for Image Denoising},
+  year    = {2026},
+  url     = {https://github.com/VKHS/Adaptive-Filters-for-Image-Denoising},
+  license = {MIT},
+  note    = {ORCID: 0000-0003-4870-2768}
+}
+```
+
+## License
+
+The code, documentation and figures are released under the [MIT License](LICENSE), © 2026 Abdolvahab Khalili
+Sadaghiani. The test images in `data/` are CC0 or public domain and keep those terms.

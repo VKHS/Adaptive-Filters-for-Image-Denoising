@@ -1,6 +1,10 @@
-# Test image
+# Test images
 
 `camera.png` (512 x 512, 8-bit gray) is the default test image. It carries no copyright restrictions (CC0).
+
+`examples/` holds the images of the [application examples](../docs/examples.md), as 512 x 512 grayscale PNGs:
+`coffee.png`, `chelsea.png`, `gravel.png` and `brick.png` (CC0) and `hubble.png` (public domain). Python
+creates them on first use (`python make_examples.py`); MATLAB's `demo_examples` reads them from here.
 
 To run everything on another image, put it here as `lena.png` (also accepted: `lena.tif`, `lena.bmp`,
 `lena.jpg`, `lenna.png`, `lena512.bmp`). Both the Python and the MATLAB code then use it instead of
